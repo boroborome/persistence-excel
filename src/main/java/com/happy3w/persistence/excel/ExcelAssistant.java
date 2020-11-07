@@ -16,11 +16,15 @@ public class ExcelAssistant {
     /**
      * 从当前位置读取数据。当前位置包含Title
      * @param tableDef 行数据定义
+     * @param workbook excel的workbook
+     * @param messageRecorder 消息记录器
      * @param <D> 行数据的类型
      * @return 以流的形式返回所有行数据
      */
     public static <D> EasyIterator<RdRowWrapper<D>> readRowsIt(
-            IRdTableDef<D, ?> tableDef, Workbook workbook, MessageRecorder messageRecorder) {
+            IRdTableDef<D, ?> tableDef,
+            Workbook workbook,
+            MessageRecorder messageRecorder) {
         return EasyIterator.range(0, workbook.getNumberOfSheets())
                 .map(index -> SheetPage.of(workbook.getSheetAt(index)))
                 .flatMap(page -> RdRowIterator.from(page, tableDef, messageRecorder));
