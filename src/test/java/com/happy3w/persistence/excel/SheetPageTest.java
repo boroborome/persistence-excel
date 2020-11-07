@@ -37,6 +37,7 @@ public class SheetPageTest extends TestCase {
         List<MyData> readDatas = RdAssistant.readObjs(objRdTableDef, page, messageRecorder)
                 .collect(Collectors.toList());
 
+        Assert.assertEquals(0, messageRecorder.getErrors().size());
         Assert.assertEquals(dataList.size(), readDatas.size());
     }
 
