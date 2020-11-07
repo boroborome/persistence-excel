@@ -76,5 +76,14 @@ messageRecorder.isSuccess(); // 检测解析过程是否成功
 MessageRecorder的用法可以参见https://github.com/boroborome/toolkits
 
 ### ExcelAssistant
-其他功能，文档补充中
+通过ExcelAssistant可以读取所有Sheet页内容
+```java
+// 打开excel文件，
+Workbook workbook = ExcelUtil.openWorkbook(new FileInputStream(excelFile));
 
+// 读取所有Sheet页中数据。要求每页都有标题，各页的标题顺序可以不同
+MessageRecorder messageRecorder = new MessageRecorder();
+List<MyData> datas = ExcelAssistant.readRows(objRdTableDef, workbook, messageRecorder)
+        .collect(Collectors.toList());
+
+```
