@@ -21,8 +21,14 @@ Add the Gradle dependency:
 implementation 'com.happy3w:persistence-excel:0.0.1'
 ```
 
-## Demo
-定义自己的数据结构
+## 组件介绍
+- SheetPage Excel Sheet页
+- ExcelAssistant Excel功能助手
+
+---
+
+### SheetPage
+这里是一个Demo，先定义自己的数据结构
 ```java
 @Getter
 @Setter
@@ -67,6 +73,8 @@ List<MyData> datas = RdAssistant.readObjs(objRdTableDef, page, messageRecorder)
 messageRecorder.getErrors(); // 所有解析文件过程中的错误信息
 messageRecorder.isSuccess(); // 检测解析过程是否成功
 ```
+MessageRecorder的用法可以参见https://github.com/boroborome/toolkits
 
+### ExcelAssistant
 其他功能，文档补充中
 
