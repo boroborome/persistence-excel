@@ -1,11 +1,18 @@
 package com.happy3w.persistence.excel;
 
 import com.happy3w.persistence.core.rowdata.RdAssistant;
+import com.happy3w.persistence.core.rowdata.RdRowWrapper;
+import com.happy3w.persistence.core.rowdata.config.DateFormat;
+import com.happy3w.persistence.core.rowdata.config.DateZoneId;
+import com.happy3w.persistence.core.rowdata.config.NumFormat;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdColumn;
+import com.happy3w.persistence.core.rowdata.obj.ObjRdPostAction;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdTableDef;
+import com.happy3w.toolkits.convert.SimpleConverter;
 import com.happy3w.toolkits.message.MessageRecorder;
 import junit.framework.TestCase;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,14 +21,22 @@ import org.junit.Assert;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SheetPageTest extends TestCase {
 
     public void test_read_write_success_when_normal() throws IOException {
-        List<MyData> dataList = Arrays.asList(new MyData("Tom", 12),
-                new MyData("张三", 21));
+        List<MyData> dataList = Arrays.asList(
+                MyData.builder().name("Tom")
+                .age(12)
+                .enabled(false)
+                .build(),
+                MyData.builder().name("张三")
+                        .age(21)
+                        .birthday(SimpleConverter.getInstance().convert("2020-10-10", Date.class))
+                        .build());
 
         Workbook workbook = ExcelUtil.newXlsWorkbook();
         SheetPage page = SheetPage.of(workbook, "test-page");
@@ -45,11 +60,34 @@ public class SheetPageTest extends TestCase {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
+    @DateZoneId("UTC+8")
     public static class MyData {
-        @ObjRdColumn("名字")
+        @ObjRdColumn(value = "名字")
         private String name;
 
-        @ObjRdColumn("年龄")
+        @ObjRdColumn(value = "年龄", required = false)
+        @NumFormat("000")
         private int age;
+
+        @ObjRdColumn(value = "在校生", getter = "getEnabledText", setter = "setEnabledText")
+        private boolean enabled;
+
+        @ObjRdColumn("生日")
+        @DateFormat("yyyy-MM-dd")
+        private Date birthday;
+
+        @ObjRdPostAction
+        public void postInit(RdRowWrapper<MyData> data, MessageRecorder recorder) {
+
+        }
+
+        public String getEnabledText() {
+            return Boolean.toString(enabled);
+        }
+
+        public void setEnabledText(String enabled, RdRowWrapper<MyData> data, MessageRecorder recorder) {
+            this.enabled = Boolean.parseBoolean(enabled);
+        }
     }
 }
