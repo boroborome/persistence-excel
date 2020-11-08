@@ -8,8 +8,8 @@ import com.happy3w.persistence.core.rowdata.page.AbstractWriteDataPage;
 import com.happy3w.persistence.core.rowdata.page.IReadDataPage;
 import com.happy3w.persistence.excel.config.DateFormatStyleBuilder;
 import com.happy3w.persistence.excel.config.NumFormatStyleBuilder;
-import com.happy3w.persistence.excel.writer.ICellTypeWriter;
-import com.happy3w.persistence.excel.writer.TypeWriterManager;
+import com.happy3w.persistence.excel.writer.ICellAccessor;
+import com.happy3w.persistence.excel.writer.CellAccessManager;
 import com.happy3w.toolkits.convert.SimpleConverter;
 import com.happy3w.toolkits.manager.TypeItemManager;
 import com.happy3w.toolkits.message.MessageRecorderException;
@@ -101,7 +101,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     @Getter
     @Setter
-    private TypeItemManager<ICellTypeWriter> typeWriterManager;
+    private TypeItemManager<ICellAccessor> cellAccessManager;
 
     private Map<Class<? extends IRdConfig>, RdConfigInfo> configTypeToInfo = new HashMap<>();
     private Map<Class<? extends IRdConfig>, RdConfigInfo> dataFormatConfigs = new HashMap<>();
@@ -118,7 +118,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
     public SheetPage(Sheet sheet) {
         this.sheet = sheet;
         valueConverter = SimpleConverter.getInstance();
-        typeWriterManager = TypeWriterManager.INSTANCE.newCopy();
+        cellAccessManager = CellAccessManager.INSTANCE.newCopy();
         regRdConfigInfos(DEFAULT_FORMAT_CONFIGS);
     }
 
@@ -182,7 +182,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
         Object finalValue = convertValueToExpectType(value, expectValueType);
         if (finalValue != null) {
-            ICellTypeWriter writer = chooseWriter(finalValue);
+            ICellAccessor writer = chooseWriter(finalValue);
             writer.write(cell, finalValue, mergedConfig);
         }
 
@@ -278,8 +278,8 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         return mergedConfig;
     }
 
-    private ICellTypeWriter chooseWriter(Object value) {
-        ICellTypeWriter writer = typeWriterManager.findItemInheritType(value.getClass());
+    private ICellAccessor chooseWriter(Object value) {
+        ICellAccessor writer = cellAccessManager.findItemInheritType(value.getClass());
         if (writer == null) {
             throw new UnsupportedOperationException(
                     MessageFormat.format("Unsupported type {0}, no write for it.", value.getClass()));

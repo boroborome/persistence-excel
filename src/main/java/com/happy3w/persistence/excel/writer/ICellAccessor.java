@@ -5,6 +5,6 @@ import com.happy3w.toolkits.manager.ITypeItem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-public interface ICellTypeWriter<T> extends ITypeItem<T> {
+public interface ICellAccessor<T> extends ITypeItem<T> {
     void write(Cell cell, T value, ExtConfigs extConfigs);
 }

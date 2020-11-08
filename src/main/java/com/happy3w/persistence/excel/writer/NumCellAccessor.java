@@ -3,7 +3,7 @@ package com.happy3w.persistence.excel.writer;
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
 import org.apache.poi.ss.usermodel.Cell;
 
-public class NumCellTypeWriter implements ICellTypeWriter<Number>{
+public class NumCellAccessor implements ICellAccessor<Number> {
     @Override
     public void write(Cell cell, Number value, ExtConfigs extConfigs) {
         cell.setCellValue(((Number) value).doubleValue());

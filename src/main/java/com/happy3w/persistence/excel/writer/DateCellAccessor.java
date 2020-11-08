@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class DateCellTypeWriter implements ICellTypeWriter<Date>{
+public class DateCellAccessor implements ICellAccessor<Date> {
     @Override
     public void write(Cell cell, Date value, ExtConfigs extConfigs) {
         DateZoneIdImpl zoneIdConfig = extConfigs.getConfig(DateZoneIdImpl.class);
