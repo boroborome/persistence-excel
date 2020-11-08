@@ -10,6 +10,11 @@ public class StringCellAccessor implements ICellAccessor<String> {
     }
 
     @Override
+    public String read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
+        return cell.getStringCellValue();
+    }
+
+    @Override
     public Class<String> getType() {
         return String.class;
     }
