@@ -182,8 +182,8 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
         Object finalValue = convertValueToExpectType(value, expectValueType);
         if (finalValue != null) {
-            ICellAccessor writer = chooseWriter(finalValue);
-            writer.write(cell, finalValue, mergedConfig);
+            ICellAccessor accessor = chooseAccessor(finalValue.getClass());
+            accessor.write(cell, finalValue, mergedConfig);
         }
 
         configCellStyle(cell, mergedConfig);
@@ -278,11 +278,11 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         return mergedConfig;
     }
 
-    private ICellAccessor chooseWriter(Object value) {
-        ICellAccessor writer = cellAccessManager.findItemInheritType(value.getClass());
+    private ICellAccessor chooseAccessor(Class valueType) {
+        ICellAccessor writer = cellAccessManager.findItemInheritType(valueType);
         if (writer == null) {
             throw new UnsupportedOperationException(
-                    MessageFormat.format("Unsupported type {0}, no write for it.", value.getClass()));
+                    MessageFormat.format("Unsupported type {0}, no write for it.", valueType));
         }
         return writer;
     }
