@@ -173,7 +173,8 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         Cell cell = ensureCell(row, column);
 
         ExtConfigs columnConfig = columnConfigs.get(column);
-        Pair<Class<?>, Class<? extends IRdConfig>> typeInfos = adjustValueAndFormatType(value, extConfigs, columnConfig);
+        Pair<Class<?>, Class<? extends IRdConfig>> typeInfos =
+                adjustValueAndFormatType(value == null ? null : value.getClass(), extConfigs, columnConfig);
         Class<?> expectValueType = typeInfos.getKey();
         Class<? extends IRdConfig> formatConfigType = typeInfos.getValue();
 
@@ -236,8 +237,8 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         return null;
     }
 
-    private Pair<Class<?>, Class<? extends IRdConfig>> adjustValueAndFormatType(Object curValue, ExtConfigs... extConfigs) {
-        Class<?> expectValueType = curValue == null ? null : curValue.getClass();
+    private Pair<Class<?>, Class<? extends IRdConfig>> adjustValueAndFormatType(Class<?> valueType, ExtConfigs... extConfigs) {
+        Class<?> expectValueType = valueType;
         Class<? extends IRdConfig> formatConfigType = findFirstDataFormatConfig(extConfigs);
 
         if (formatConfigType == null) {
