@@ -1,4 +1,4 @@
-package com.happy3w.persistence.excel.config;
+package com.happy3w.persistence.excel.style;
 
 import com.happy3w.persistence.core.rowdata.config.NumFormatImpl;
 import org.apache.poi.ss.usermodel.CellStyle;
