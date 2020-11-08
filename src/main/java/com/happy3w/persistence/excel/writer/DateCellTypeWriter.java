@@ -14,15 +14,13 @@ public class DateCellTypeWriter implements ICellTypeWriter<Date>{
     @Override
     public void write(Cell cell, Date value, ExtConfigs extConfigs) {
         DateZoneIdImpl zoneIdConfig = extConfigs.getConfig(DateZoneIdImpl.class);
-        if (zoneIdConfig == null) {
-            cell.setCellValue(value.getTime());
-        } else {
-            ZoneId zoneId = ZoneIdCache.getZoneId(zoneIdConfig.getZoneId());
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(value);
-            calendar.setTimeZone(TimeZone.getTimeZone(zoneId));
-            cell.setCellValue(calendar);
-        }
+        String zoneIdStr = zoneIdConfig == null ? ZoneId.systemDefault().getId() :  zoneIdConfig.getZoneId();
+        ZoneId zoneId = ZoneIdCache.getZoneId(zoneIdStr);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(value);
+        calendar.setTimeZone(TimeZone.getTimeZone(zoneId));
+        cell.setCellValue(calendar);
     }
 
     @Override
