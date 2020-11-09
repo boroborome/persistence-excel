@@ -6,8 +6,10 @@ public class CellAccessManager {
     public static final TypeItemManager<ICellAccessor> INSTANCE = new TypeItemManager<ICellAccessor>();
 
     static {
+        INSTANCE.registItem(new IntegerCellAccessor());
+        INSTANCE.registItem(new LongCellAccessor());
         INSTANCE.registItem(new StringCellAccessor());
-        INSTANCE.registItem(new NumCellAccessor());
+        INSTANCE.registItem(new DoubleCellAccessor());
         INSTANCE.registItem(new DateCellAccessor());
     }
 }

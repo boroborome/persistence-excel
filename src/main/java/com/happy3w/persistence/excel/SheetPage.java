@@ -6,37 +6,29 @@ import com.happy3w.persistence.core.rowdata.config.DateFormatImpl;
 import com.happy3w.persistence.core.rowdata.config.NumFormatImpl;
 import com.happy3w.persistence.core.rowdata.page.AbstractWriteDataPage;
 import com.happy3w.persistence.core.rowdata.page.IReadDataPage;
+import com.happy3w.persistence.excel.access.CellAccessManager;
+import com.happy3w.persistence.excel.access.ICellAccessor;
 import com.happy3w.persistence.excel.style.DateFormatStyleBuilder;
 import com.happy3w.persistence.excel.style.NumFormatStyleBuilder;
-import com.happy3w.persistence.excel.access.ICellAccessor;
-import com.happy3w.persistence.excel.access.CellAccessManager;
-import com.happy3w.toolkits.convert.SimpleConverter;
+import com.happy3w.toolkits.convert.TypeConverter;
 import com.happy3w.toolkits.manager.TypeItemManager;
-import com.happy3w.toolkits.message.MessageRecorderException;
-import com.happy3w.toolkits.utils.MapBuilder;
 import com.happy3w.toolkits.utils.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 
-import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 @Slf4j
 public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IReadDataPage<SheetPage> {
@@ -52,52 +44,12 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         DEFAULT_FORMAT_CONFIGS.add(new RdConfigInfo<>(Date.class, DateFormatImpl.class, DateFormatStyleBuilder::build, true));
     }
 
-    private static final Function<Cell, Object> NULLABLE_NUMBER_READER_FUNCTION = c -> {
-        if (CellType.BLANK.equals(c.getCellTypeEnum())) {
-            return null;
-        }
-        return c.getNumericCellValue();
-    };
-
-    private static final Function<Cell, Object> NULLABLE_DATE_READER_FUNCTION = c -> {
-        if (CellType.BLANK.equals(c.getCellTypeEnum())) {
-            return null;
-        }
-        if (CellType.NUMERIC.equals(c.getCellTypeEnum())) {
-            return c.getDateCellValue();
-        }
-        if (!CellType.STRING.equals(c.getCellTypeEnum())) {
-            throw new MessageRecorderException("Can't read date from cell type:" + c.getCellTypeEnum());
-        }
-        String strDate = c.getStringCellValue().trim();
-        Date date = null;
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(strDate);
-        } catch (ParseException e) {
-            log.error("Failed to parse date:" + strDate, e);
-        }
-        return date;
-    };
-
-    private static final Map<Class, Function<Cell, Object>> CELL_READER_MAP = MapBuilder
-            .<Class, Function<Cell, Object>>of(String.class, (c) -> {
-                c.setCellType(CellType.STRING);
-                return c.getStringCellValue().trim();
-            })
-            .and(double.class, c -> c.getNumericCellValue())
-            .and(Double.class, NULLABLE_NUMBER_READER_FUNCTION)
-            .and(Integer.class, c -> (int) c.getNumericCellValue())
-            .and(Long.class, c -> (long) c.getNumericCellValue())
-            .and(Date.class, NULLABLE_DATE_READER_FUNCTION)
-            .and(BigDecimal.class, c -> new BigDecimal(((XSSFCell) c).getRawValue()))
-            .build();
-
     @Getter
     private final Sheet sheet;
 
     @Getter
     @Setter
-    private SimpleConverter valueConverter;
+    private TypeConverter valueConverter;
 
     @Getter
     @Setter
@@ -117,7 +69,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     public SheetPage(Sheet sheet) {
         this.sheet = sheet;
-        valueConverter = SimpleConverter.getInstance();
+        valueConverter = TypeConverter.INSTANCE.newCopy();
         cellAccessManager = CellAccessManager.INSTANCE.newCopy();
         regRdConfigInfos(DEFAULT_FORMAT_CONFIGS);
     }
@@ -143,6 +95,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     @Override
     public <D> D readValue(int rowIndex, int columnIndex, Class<D> dataType, ExtConfigs extConfigs) {
+
         Row row = sheet.getRow(rowIndex);
         if (row == null) {
             return null;
@@ -152,20 +105,16 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
             return null;
         }
 
-        Function<Cell, Object> reader = CELL_READER_MAP.get(dataType);
-        if (reader != null) {
-            try {
-                return (D) reader.apply(cell);
-            } catch (Exception e) {
-                throw new IllegalArgumentException(
-                        MessageFormat.format("Failed to read cell value at row:{0}, column:{1}, dataType:{2}.",
-                                rowIndex, columnIndex, dataType), e);
-            }
-        }
-        cell.setCellType(CellType.STRING);
-        String strValue = cell.getStringCellValue().trim();
-        Object newValue = SimpleConverter.getInstance().convert(strValue, dataType);
-        return (D) newValue;
+        ExtConfigs columnConfig = columnConfigs.get(column);
+        Pair<Class<?>, Class<? extends IRdConfig>> typeInfos = adjustValueAndFormatType(dataType, extConfigs, columnConfig);
+        Class<?> expectValueType = typeInfos.getKey();
+        Class<? extends IRdConfig> formatConfigType = typeInfos.getValue();
+
+        ExtConfigs mergedConfig = mergeConfigs(formatConfigType, extConfigs, columnConfig, this.extConfigs);
+        ICellAccessor accessor = chooseAccessor(expectValueType);
+        Object cellValue = accessor.read(cell, expectValueType, mergedConfig);
+
+        return (D) convertValueToExpectType(cellValue, dataType);
     }
 
     @Override

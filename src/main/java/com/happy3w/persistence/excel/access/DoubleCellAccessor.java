@@ -4,14 +4,14 @@ import com.happy3w.persistence.core.rowdata.ExtConfigs;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
-public class NumCellAccessor implements ICellAccessor<Number> {
+public class DoubleCellAccessor implements ICellAccessor<Double> {
     @Override
-    public void write(Cell cell, Number value, ExtConfigs extConfigs) {
-        cell.setCellValue(((Number) value).doubleValue());
+    public void write(Cell cell, Double value, ExtConfigs extConfigs) {
+        cell.setCellValue(value);
     }
 
     @Override
-    public Number read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
+    public Double read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
         if (CellType.BLANK.equals(cell.getCellTypeEnum())) {
             return null;
         }
@@ -19,7 +19,7 @@ public class NumCellAccessor implements ICellAccessor<Number> {
     }
 
     @Override
-    public Class<Number> getType() {
-        return Number.class;
+    public Class<Double> getType() {
+        return Double.class;
     }
 }
