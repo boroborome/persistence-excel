@@ -15,5 +15,6 @@ public class RdciHolder {
     static {
         ALL_CONFIG_INFOS.add(new NumFormatRdci());
         ALL_CONFIG_INFOS.add(new DateFormatRdci());
+        ALL_CONFIG_INFOS.add(new FillForegroundColorRdci());
     }
 }
