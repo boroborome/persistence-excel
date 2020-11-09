@@ -2,12 +2,9 @@ package com.happy3w.persistence.excel;
 
 import com.happy3w.persistence.core.rowdata.IRdConfig;
 import com.happy3w.toolkits.manager.ITypeItem;
-import com.happy3w.toolkits.utils.TernaryConsumer;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -27,7 +24,11 @@ public abstract class RdConfigInfo<VT, CT extends IRdConfig> implements ITypeIte
      */
     protected Class<CT> configType;
 
-    public RdConfigInfo(Class<VT> type, Class<CT> configType) {
+    public RdConfigInfo(Class<CT> configType) {
+        this(configType, null);
+    }
+
+    public RdConfigInfo(Class<CT> configType, Class<VT> type) {
         this.type = type;
         this.configType = configType;
         this.isDataFormat = type != null && type != Void.class && type != Object.class;
