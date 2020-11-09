@@ -2,14 +2,11 @@ package com.happy3w.persistence.excel;
 
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
 import com.happy3w.persistence.core.rowdata.IRdConfig;
-import com.happy3w.persistence.core.rowdata.config.DateFormatImpl;
-import com.happy3w.persistence.core.rowdata.config.NumFormatImpl;
 import com.happy3w.persistence.core.rowdata.page.AbstractWriteDataPage;
 import com.happy3w.persistence.core.rowdata.page.IReadDataPage;
 import com.happy3w.persistence.excel.access.CellAccessManager;
 import com.happy3w.persistence.excel.access.ICellAccessor;
-import com.happy3w.persistence.excel.style.DateFormatStyleBuilder;
-import com.happy3w.persistence.excel.style.NumFormatStyleBuilder;
+import com.happy3w.persistence.excel.rdci.RdciHolder;
 import com.happy3w.toolkits.convert.TypeConverter;
 import com.happy3w.toolkits.manager.TypeItemManager;
 import com.happy3w.toolkits.utils.Pair;
@@ -25,25 +22,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IReadDataPage<SheetPage> {
-
-    /**
-     * 默认的配置处理信息<br>
-     */
-    public static final List<RdConfigInfo<?, ? extends IRdConfig>> DEFAULT_CONFIG_INFOS = new ArrayList<>();
-
-    static {
-        DEFAULT_CONFIG_INFOS.add(new RdConfigInfo<>(Number.class, NumFormatImpl.class, NumFormatStyleBuilder::build, true));
-        DEFAULT_CONFIG_INFOS.add(new RdConfigInfo<>(Date.class, DateFormatImpl.class, DateFormatStyleBuilder::build, true));
-    }
-
     @Getter
     private final Sheet sheet;
 
@@ -71,7 +55,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         this.sheet = sheet;
         valueConverter = TypeConverter.INSTANCE.newCopy();
         cellAccessManager = CellAccessManager.INSTANCE.newCopy();
-        regRdConfigInfos(DEFAULT_CONFIG_INFOS);
+        regRdConfigInfos(RdciHolder.ALL_CONFIG_INFOS);
     }
 
     public void regRdConfigInfos(List<RdConfigInfo<?, ? extends IRdConfig>> rdConfigInfos) {
@@ -154,10 +138,10 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         for (IRdConfig config : extConfigs.getConfigs().values()) {
             RdConfigInfo<?, IRdConfig> configInfo = configTypeToInfo.get(config.getClass());
-            if (configInfo == null || configInfo.getStyleBuilder() == null) {
+            if (configInfo == null) {
                 continue;
             }
-            configInfo.getStyleBuilder().accept(cellStyle, config, format -> getDataFormat(format));
+            configInfo.buildStyle(cellStyle, config, format -> getDataFormat(format));
         }
         return cellStyle;
     }
