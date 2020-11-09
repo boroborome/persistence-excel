@@ -116,6 +116,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         Class<? extends IRdConfig> formatConfigType = typeInfos.getValue();
 
         ExtConfigs mergedConfig = mergeConfigs(formatConfigType, extConfigs, columnConfig, this.extConfigs);
+        buildStyleContext.setExtConfigs(mergedConfig);
 
         Object finalValue = convertValueToExpectType(value, expectValueType);
         if (finalValue != null) {

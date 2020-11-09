@@ -13,8 +13,8 @@ public class DateFormatRdci extends RdConfigInfo<Date, DateFormatImpl> {
     }
 
     @Override
-    public void buildStyle(CellStyle cellStyle, DateFormatImpl rdConfig, BuildStyleContext buildStyleContext) {
-        short formatId = buildStyleContext.getWorkbook()
+    public void buildStyle(CellStyle cellStyle, DateFormatImpl rdConfig, BuildStyleContext bsc) {
+        short formatId = bsc.getWorkbook()
                 .createDataFormat()
                 .getFormat(rdConfig.getFormat());
         cellStyle.setDataFormat(formatId);

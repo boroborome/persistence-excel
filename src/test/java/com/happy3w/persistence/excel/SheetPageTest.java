@@ -9,6 +9,8 @@ import com.happy3w.persistence.core.rowdata.config.NumFormat;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdColumn;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdPostAction;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdTableDef;
+import com.happy3w.persistence.excel.rdci.FillForegroundColor;
+import com.happy3w.persistence.excel.util.HssfColor;
 import com.happy3w.toolkits.convert.SimpleConverter;
 import com.happy3w.toolkits.message.MessageRecorder;
 import junit.framework.TestCase;
@@ -47,9 +49,6 @@ public class SheetPageTest extends TestCase {
         ObjRdTableDef<MyData> objRdTableDef = ObjRdTableDef.from(MyData.class);
         RdAssistant.writeObj(orgDataList.stream(), page, objRdTableDef);
 
-//        File excelFile = new File("/Users/ysgao/Downloads/2020-10/temp.xlsx");
-//        workbook.write(new FileOutputStream(excelFile));
-
         page.locate(0, 0);
         MessageRecorder messageRecorder = new MessageRecorder();
         List<MyData> newDataList = RdAssistant.readObjs(objRdTableDef, page, messageRecorder)
@@ -66,6 +65,7 @@ public class SheetPageTest extends TestCase {
     @Builder
     @EqualsAndHashCode
     public static class MyData {
+        @FillForegroundColor(HssfColor.RED)
         @ObjRdColumn(value = "名字")
         private String name;
 

@@ -11,8 +11,8 @@ public class NumFormatRdci extends RdConfigInfo<Number, NumFormatImpl> {
     }
 
     @Override
-    public void buildStyle(CellStyle cellStyle, NumFormatImpl rdConfig, BuildStyleContext buildStyleContext) {
-        short formatId = buildStyleContext.getWorkbook()
+    public void buildStyle(CellStyle cellStyle, NumFormatImpl rdConfig, BuildStyleContext bsc) {
+        short formatId = bsc.getWorkbook()
                 .createDataFormat()
                 .getFormat(rdConfig.getFormat());
         cellStyle.setDataFormat(formatId);
