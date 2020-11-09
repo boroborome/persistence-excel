@@ -35,14 +35,13 @@ import java.util.Map;
 public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IReadDataPage<SheetPage> {
 
     /**
-     * 默认的格式配置<br>
-     *     在一个单元格上，只有一个格式配置会生效，各个格式配置是冲突的
+     * 默认的配置处理信息<br>
      */
-    public static final List<RdConfigInfo<?, ? extends IRdConfig>> DEFAULT_FORMAT_CONFIGS = new ArrayList<>();
+    public static final List<RdConfigInfo<?, ? extends IRdConfig>> DEFAULT_CONFIG_INFOS = new ArrayList<>();
 
     static {
-        DEFAULT_FORMAT_CONFIGS.add(new RdConfigInfo<>(Number.class, NumFormatImpl.class, NumFormatStyleBuilder::build, true));
-        DEFAULT_FORMAT_CONFIGS.add(new RdConfigInfo<>(Date.class, DateFormatImpl.class, DateFormatStyleBuilder::build, true));
+        DEFAULT_CONFIG_INFOS.add(new RdConfigInfo<>(Number.class, NumFormatImpl.class, NumFormatStyleBuilder::build, true));
+        DEFAULT_CONFIG_INFOS.add(new RdConfigInfo<>(Date.class, DateFormatImpl.class, DateFormatStyleBuilder::build, true));
     }
 
     @Getter
@@ -72,7 +71,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         this.sheet = sheet;
         valueConverter = TypeConverter.INSTANCE.newCopy();
         cellAccessManager = CellAccessManager.INSTANCE.newCopy();
-        regRdConfigInfos(DEFAULT_FORMAT_CONFIGS);
+        regRdConfigInfos(DEFAULT_CONFIG_INFOS);
     }
 
     public void regRdConfigInfos(List<RdConfigInfo<?, ? extends IRdConfig>> rdConfigInfos) {
@@ -155,7 +154,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         for (IRdConfig config : extConfigs.getConfigs().values()) {
             RdConfigInfo<?, IRdConfig> configInfo = configTypeToInfo.get(config.getClass());
-            if (configInfo == null) {
+            if (configInfo == null || configInfo.getStyleBuilder() == null) {
                 continue;
             }
             configInfo.getStyleBuilder().accept(cellStyle, config, format -> getDataFormat(format));
