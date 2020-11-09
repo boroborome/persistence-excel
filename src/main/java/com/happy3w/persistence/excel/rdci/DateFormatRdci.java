@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public class DateFormatRdci extends RdConfigInfo<Date, DateFormatImpl> {
     public DateFormatRdci() {
-        super(Date.class, DateFormatImpl.class, true);
+        super(Date.class, DateFormatImpl.class);
     }
 
     @Override

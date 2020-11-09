@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 public class FillForegroundColorRdci extends RdConfigInfo<Void, FillForegroundColorImpl> {
     public FillForegroundColorRdci() {
-        super(Void.class, FillForegroundColorImpl.class, false);
+        super(Void.class, FillForegroundColorImpl.class);
     }
 
     @Override

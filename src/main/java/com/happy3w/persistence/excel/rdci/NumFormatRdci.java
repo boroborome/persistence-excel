@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class NumFormatRdci extends RdConfigInfo<Number, NumFormatImpl> {
     public NumFormatRdci() {
-        super(Number.class, NumFormatImpl.class, true);
+        super(Number.class, NumFormatImpl.class);
     }
 
     @Override
