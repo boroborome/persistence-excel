@@ -1,9 +1,8 @@
 package com.happy3w.persistence.excel.rdci;
 
+import com.happy3w.persistence.excel.CellContext;
 import com.happy3w.persistence.excel.RdConfigInfo;
 import org.apache.poi.ss.usermodel.CellStyle;
-
-import java.util.function.Function;
 
 public class FillForegroundColorRdci extends RdConfigInfo<Void, FillForegroundColorImpl> {
     public FillForegroundColorRdci() {
@@ -11,7 +10,7 @@ public class FillForegroundColorRdci extends RdConfigInfo<Void, FillForegroundCo
     }
 
     @Override
-    public void buildStyle(CellStyle cellStyle, FillForegroundColorImpl rdConfig, Function<String, Short> formatGetter) {
+    public void buildStyle(CellStyle cellStyle, FillForegroundColorImpl rdConfig, CellContext cellContext) {
         cellStyle.setFillForegroundColor(rdConfig.getColor());
     }
 }

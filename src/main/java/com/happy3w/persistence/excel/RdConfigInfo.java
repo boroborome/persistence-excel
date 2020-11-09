@@ -45,7 +45,7 @@ public abstract class RdConfigInfo<VT, CT extends IRdConfig> implements ITypeIte
      * 将这个而配置应用到CellStyle上
      * @param cellStyle 等待配置的cellStyle
      * @param rdConfig 需要配置到cellStyle上的配置信息
-     * @param formatGetter DataFormat类操作获取excel的format code方法
+     * @param cellContext 包含当前单元格信息的一些上下文
      */
-    public abstract void buildStyle(CellStyle cellStyle, CT rdConfig, Function<String, Short> formatGetter);
+    public abstract void buildStyle(CellStyle cellStyle, CT rdConfig, CellContext cellContext);
 }
