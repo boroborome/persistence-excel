@@ -50,12 +50,12 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     private Map<String, CellStyle> cellStyleMap = new HashMap<>();
 
-    private CellContext cellContext = new CellContext();
+    private BuildStyleContext buildStyleContext = new BuildStyleContext();
 
     public SheetPage(Sheet sheet) {
         this.sheet = sheet;
-        cellContext.setSheet(sheet);
-        cellContext.setWorkbook(sheet.getWorkbook());
+        buildStyleContext.setSheet(sheet);
+        buildStyleContext.setWorkbook(sheet.getWorkbook());
         valueConverter = TypeConverter.INSTANCE.newCopy();
         cellAccessManager = CellAccessManager.INSTANCE.newCopy();
         regRdConfigInfos(RdciHolder.ALL_CONFIG_INFOS);
@@ -106,7 +106,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     @Override
     public SheetPage writeValueCfg(Object value, ExtConfigs extConfigs) {
-        cellContext.setValue(value);
+        buildStyleContext.setValue(value);
         Cell cell = ensureCell(row, column);
 
         ExtConfigs columnConfig = columnConfigs.get(column);
@@ -145,7 +145,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
             if (configInfo == null) {
                 continue;
             }
-            configInfo.buildStyle(cellStyle, config, cellContext);
+            configInfo.buildStyle(cellStyle, config, buildStyleContext);
         }
         return cellStyle;
     }

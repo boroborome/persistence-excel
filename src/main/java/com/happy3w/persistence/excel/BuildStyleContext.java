@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 @Getter
 @Setter
-public class CellContext {
+public class BuildStyleContext {
     private Object value;
     private Sheet sheet;
     private Workbook workbook;

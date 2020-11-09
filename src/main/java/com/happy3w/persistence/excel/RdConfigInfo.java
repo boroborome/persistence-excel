@@ -5,8 +5,6 @@ import com.happy3w.toolkits.manager.ITypeItem;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-import java.util.function.Function;
-
 /**
  * 配置处理信息。SheetPage用这些信息让各种配置在Excel上生效
  * @param <VT> 需要处理数据的数据类型
@@ -45,7 +43,7 @@ public abstract class RdConfigInfo<VT, CT extends IRdConfig> implements ITypeIte
      * 将这个而配置应用到CellStyle上
      * @param cellStyle 等待配置的cellStyle
      * @param rdConfig 需要配置到cellStyle上的配置信息
-     * @param cellContext 包含当前单元格信息的一些上下文
+     * @param buildStyleContext 包含当前单元格信息的一些上下文
      */
-    public abstract void buildStyle(CellStyle cellStyle, CT rdConfig, CellContext cellContext);
+    public abstract void buildStyle(CellStyle cellStyle, CT rdConfig, BuildStyleContext buildStyleContext);
 }
