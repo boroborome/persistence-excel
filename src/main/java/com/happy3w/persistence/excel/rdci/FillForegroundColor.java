@@ -14,8 +14,8 @@ public @interface FillForegroundColor {
 
     /**
      * 调色板中的索引<br>
-     *     参考HSSFColor.DARK_RED.index
-     * @return
+     *     参考HssfColor.DARK_RED
+     * @return 需要设置的颜色索引
      */
     short value();
 }
