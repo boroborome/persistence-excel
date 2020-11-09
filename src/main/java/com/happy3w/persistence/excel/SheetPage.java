@@ -66,8 +66,8 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     public void regRdConfigInfo(RdConfigInfo<?, ? extends IRdConfig> rdConfigInfo) {
         configTypeToInfo.put(rdConfigInfo.getConfigType(), rdConfigInfo);
-        dataTypeToInfo.registItem(rdConfigInfo);
         if (rdConfigInfo.isDataFormat()) {
+            dataTypeToInfo.registItem(rdConfigInfo);
             dataFormatConfigs.put(rdConfigInfo.getConfigType(), rdConfigInfo);
         }
     }
