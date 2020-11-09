@@ -10,6 +10,8 @@ import org.apache.poi.ss.usermodel.CellType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,9 +20,7 @@ import java.util.TimeZone;
 public class DateCellAccessor implements ICellAccessor<Date> {
     @Override
     public void write(Cell cell, Date value, ExtConfigs extConfigs) {
-        DateZoneIdImpl zoneIdConfig = extConfigs.getConfig(DateZoneIdImpl.class);
-        String zoneIdStr = zoneIdConfig == null ? ZoneId.systemDefault().getId() :  zoneIdConfig.getZoneId();
-        ZoneId zoneId = ZoneIdCache.getZoneId(zoneIdStr);
+        ZoneId zoneId = getZoneId(extConfigs);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(value);
@@ -28,13 +28,26 @@ public class DateCellAccessor implements ICellAccessor<Date> {
         cell.setCellValue(calendar);
     }
 
+    private ZoneId getZoneId(ExtConfigs extConfigs) {
+        DateZoneIdImpl zoneIdConfig = extConfigs.getConfig(DateZoneIdImpl.class);
+        String zoneIdStr = zoneIdConfig == null ? ZoneId.systemDefault().getId() :  zoneIdConfig.getZoneId();
+        ZoneId zoneId = ZoneIdCache.getZoneId(zoneIdStr);
+        return zoneId;
+    }
+
     @Override
     public Date read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
         if (CellType.BLANK.equals(cell.getCellTypeEnum())) {
             return null;
         }
+
+        ZoneId zoneId = getZoneId(extConfigs);
         if (CellType.NUMERIC.equals(cell.getCellTypeEnum())) {
-            return cell.getDateCellValue();
+            Date cellDate = cell.getDateCellValue();
+            Instant instant = LocalDateTime.ofInstant(cellDate.toInstant(), ZoneId.systemDefault())
+                    .atZone(zoneId)
+                    .toInstant();
+            return Date.from(instant);
         }
         if (!CellType.STRING.equals(cell.getCellTypeEnum())) {
             throw new MessageRecorderException("Can't read date from cell type:" + cell.getCellTypeEnum());
@@ -42,13 +55,11 @@ public class DateCellAccessor implements ICellAccessor<Date> {
 
         String dateFormat = extConfigs.getConfig(DateFormatImpl.class).getFormat();
         String strDate = cell.getStringCellValue().trim();
-        Date date = null;
         try {
-            date = new SimpleDateFormat(dateFormat).parse(strDate);
+            return new SimpleDateFormat(dateFormat).parse(strDate);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Failed to parse date:" + strDate, e);
         }
-        return date;
     }
 
     @Override

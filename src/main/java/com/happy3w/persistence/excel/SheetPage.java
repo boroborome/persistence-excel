@@ -13,6 +13,7 @@ import com.happy3w.persistence.excel.style.NumFormatStyleBuilder;
 import com.happy3w.toolkits.convert.TypeConverter;
 import com.happy3w.toolkits.manager.TypeItemManager;
 import com.happy3w.toolkits.utils.Pair;
+import com.happy3w.toolkits.utils.PrimitiveTypeUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -95,7 +96,6 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     @Override
     public <D> D readValue(int rowIndex, int columnIndex, Class<D> dataType, ExtConfigs extConfigs) {
-
         Row row = sheet.getRow(rowIndex);
         if (row == null) {
             return null;
@@ -105,6 +105,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
             return null;
         }
 
+        dataType = PrimitiveTypeUtil.toObjType(dataType);
         ExtConfigs columnConfig = columnConfigs.get(column);
         Pair<Class<?>, Class<? extends IRdConfig>> typeInfos = adjustValueAndFormatType(dataType, extConfigs, columnConfig);
         Class<?> expectValueType = typeInfos.getKey();

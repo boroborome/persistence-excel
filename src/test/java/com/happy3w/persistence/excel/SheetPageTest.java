@@ -1,5 +1,6 @@
 package com.happy3w.persistence.excel;
 
+import com.alibaba.fastjson.JSON;
 import com.happy3w.persistence.core.rowdata.RdAssistant;
 import com.happy3w.persistence.core.rowdata.RdRowWrapper;
 import com.happy3w.persistence.core.rowdata.config.DateFormat;
@@ -13,6 +14,7 @@ import com.happy3w.toolkits.message.MessageRecorder;
 import junit.framework.TestCase;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,32 +30,33 @@ import java.util.stream.Collectors;
 public class SheetPageTest extends TestCase {
 
     public void test_read_write_success_when_normal() throws IOException {
-        List<MyData> dataList = Arrays.asList(
+        List<MyData> orgDataList = Arrays.asList(
                 MyData.builder().name("Tom")
-                .age(12)
-                .enabled(false)
-                .build(),
+                        .age(12)
+                        .enabled(true)
+                        .favoriteDate(SimpleConverter.getInstance().convert("2020-10-10 23:00:00", Date.class).getTime())
+                        .build(),
                 MyData.builder().name("张三")
                         .age(21)
-                        .birthday(SimpleConverter.getInstance().convert("2020-10-10", Date.class))
+                        .birthday(SimpleConverter.getInstance().convert("2020-10-10 23:00:00", Date.class))
                         .build());
 
-        Workbook workbook = ExcelUtil.newXlsWorkbook();
+        Workbook workbook = ExcelUtil.newXlsxWorkbook();
         SheetPage page = SheetPage.of(workbook, "test-page");
 
         ObjRdTableDef<MyData> objRdTableDef = ObjRdTableDef.from(MyData.class);
-        RdAssistant.writeObj(dataList.stream(), page, objRdTableDef);
+        RdAssistant.writeObj(orgDataList.stream(), page, objRdTableDef);
 
-//        File excelFile = File.createTempFile("temp-excel", ".xlsx");
+//        File excelFile = new File("/Users/ysgao/Downloads/2020-10/temp.xlsx");
 //        workbook.write(new FileOutputStream(excelFile));
 
         page.locate(0, 0);
         MessageRecorder messageRecorder = new MessageRecorder();
-        List<MyData> readDatas = RdAssistant.readObjs(objRdTableDef, page, messageRecorder)
+        List<MyData> newDataList = RdAssistant.readObjs(objRdTableDef, page, messageRecorder)
                 .collect(Collectors.toList());
 
-        Assert.assertEquals(0, messageRecorder.getErrors().size());
-        Assert.assertEquals(dataList.size(), readDatas.size());
+        Assert.assertEquals(JSON.toJSONString(orgDataList),
+                JSON.toJSONString(newDataList));
     }
 
     @Getter
@@ -61,7 +64,7 @@ public class SheetPageTest extends TestCase {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @DateZoneId("UTC+8")
+    @EqualsAndHashCode
     public static class MyData {
         @ObjRdColumn(value = "名字")
         private String name;
@@ -74,8 +77,13 @@ public class SheetPageTest extends TestCase {
         private boolean enabled;
 
         @ObjRdColumn("生日")
-        @DateFormat("yyyy-MM-dd")
+        @DateFormat("yyyy-MM-dd HH:mm:ss")
         private Date birthday;
+
+        @ObjRdColumn("Favorite Date")
+        @DateFormat("yyyy-MM-dd HH:mm:ss")
+        @DateZoneId("UTC-8")
+        private Long favoriteDate;
 
         @ObjRdPostAction
         public void postInit(RdRowWrapper<MyData> data, MessageRecorder recorder) {
