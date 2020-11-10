@@ -1,6 +1,6 @@
 
 group = 'com.happy3w'
-version = '0.0.2'
+version = '0.0.3'
 ext {
 	artifactId = "persistence-excel"
 
