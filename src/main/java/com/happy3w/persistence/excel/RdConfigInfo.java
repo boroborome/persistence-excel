@@ -40,7 +40,7 @@ public abstract class RdConfigInfo<VT, CT extends IRdConfig> implements ITypeIte
     protected boolean isDataFormat;
 
     /**
-     * 将这个而配置应用到CellStyle上
+     * 将这个配置应用到CellStyle上
      * @param cellStyle 等待配置的cellStyle
      * @param rdConfig 需要配置到cellStyle上的配置信息
      * @param bsc 包含当前单元格信息的一些上下文
