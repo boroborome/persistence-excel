@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.TYPE})
-@ObjRdConfigMap(FillPatternImpl.class)
+@ObjRdConfigMap(FillPatternCfg.class)
 public @interface FillPattern {
     FillPatternType value();
 }

@@ -1,17 +1,17 @@
 package com.happy3w.persistence.excel.rdci;
 
-import com.happy3w.persistence.core.rowdata.config.NumFormatImpl;
+import com.happy3w.persistence.core.rowdata.config.NumFormatCfg;
 import com.happy3w.persistence.excel.BuildStyleContext;
 import com.happy3w.persistence.excel.RdConfigInfo;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-public class NumFormatRdci extends RdConfigInfo<Number, NumFormatImpl> {
+public class NumFormatRdci extends RdConfigInfo<Number, NumFormatCfg> {
     public NumFormatRdci() {
-        super(NumFormatImpl.class, Number.class);
+        super(NumFormatCfg.class, Number.class);
     }
 
     @Override
-    public void buildStyle(CellStyle cellStyle, NumFormatImpl rdConfig, BuildStyleContext bsc) {
+    public void buildStyle(CellStyle cellStyle, NumFormatCfg rdConfig, BuildStyleContext bsc) {
         short formatId = bsc.getWorkbook()
                 .createDataFormat()
                 .getFormat(rdConfig.getFormat());

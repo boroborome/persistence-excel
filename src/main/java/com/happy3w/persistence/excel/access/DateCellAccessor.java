@@ -1,8 +1,8 @@
 package com.happy3w.persistence.excel.access;
 
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
-import com.happy3w.persistence.core.rowdata.config.DateFormatImpl;
-import com.happy3w.persistence.core.rowdata.config.DateZoneIdImpl;
+import com.happy3w.persistence.core.rowdata.config.DateFormatCfg;
+import com.happy3w.persistence.core.rowdata.config.DateZoneIdCfg;
 import com.happy3w.toolkits.message.MessageRecorderException;
 import com.happy3w.toolkits.utils.ZoneIdCache;
 import org.apache.poi.ss.usermodel.Cell;
@@ -29,7 +29,7 @@ public class DateCellAccessor implements ICellAccessor<Date> {
     }
 
     private ZoneId getZoneId(ExtConfigs extConfigs) {
-        DateZoneIdImpl zoneIdConfig = extConfigs.getConfig(DateZoneIdImpl.class);
+        DateZoneIdCfg zoneIdConfig = extConfigs.getConfig(DateZoneIdCfg.class);
         String zoneIdStr = zoneIdConfig == null ? ZoneId.systemDefault().getId() :  zoneIdConfig.getZoneId();
         ZoneId zoneId = ZoneIdCache.getZoneId(zoneIdStr);
         return zoneId;
@@ -53,7 +53,7 @@ public class DateCellAccessor implements ICellAccessor<Date> {
             throw new MessageRecorderException("Can't read date from cell type:" + cell.getCellTypeEnum());
         }
 
-        String dateFormat = extConfigs.getConfig(DateFormatImpl.class).getFormat();
+        String dateFormat = extConfigs.getConfig(DateFormatCfg.class).getFormat();
         String strDate = cell.getStringCellValue().trim();
         try {
             return new SimpleDateFormat(dateFormat).parse(strDate);

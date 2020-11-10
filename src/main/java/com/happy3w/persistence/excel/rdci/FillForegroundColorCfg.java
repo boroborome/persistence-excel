@@ -5,21 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.poi.ss.usermodel.FillPatternType;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FillPatternImpl implements IAnnotationRdConfig<FillPattern> {
-    private FillPatternType fillPattern;
+public class FillForegroundColorCfg implements IAnnotationRdConfig<FillForegroundColor> {
+    private short color;
     @Override
-    public void initBy(FillPattern annotation) {
-        this.fillPattern = annotation.value();
+    public void initBy(FillForegroundColor annotation) {
+        this.color = annotation.value();
     }
 
     @Override
     public void buildContentKey(StringBuilder builder) {
-        builder.append(fillPattern);
+        builder.append(color);
     }
 }
