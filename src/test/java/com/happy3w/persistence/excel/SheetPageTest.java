@@ -51,7 +51,7 @@ public class SheetPageTest extends TestCase {
 
         page.locate(0, 0);
         MessageRecorder messageRecorder = new MessageRecorder();
-        List<MyData> newDataList = RdAssistant.readObjs(objRdTableDef, page, messageRecorder)
+        List<MyData> newDataList = RdAssistant.readObjs(page, objRdTableDef, messageRecorder)
                 .collect(Collectors.toList());
 
         Assert.assertEquals(JSON.toJSONString(orgDataList),
