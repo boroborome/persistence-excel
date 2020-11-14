@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -57,6 +58,20 @@ public class SheetPageTest extends TestCase {
         Assert.assertEquals(JSON.toJSONString(orgDataList),
                 JSON.toJSONString(newDataList));
     }
+
+    public void test_read_formula_success() {
+        Workbook workbook = ExcelUtil.openWorkbook(SheetPage.class.getResourceAsStream("/formula-excel.xlsx"));
+        SheetPage page = SheetPage.of(workbook, "Sheet1");
+
+        ObjRdTableDef<MyData> objRdTableDef = ObjRdTableDef.from(MyData.class);
+        MessageRecorder messageRecorder = new MessageRecorder();
+        List<MyData> newDataList = RdAssistant.readObjs(page, objRdTableDef, messageRecorder)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals("[{\"age\":15,\"enabled\":false,\"enabledText\":\"false\",\"name\":\"Tom\"}]",
+                JSON.toJSONString(newDataList));
+    }
+
 
     @Getter
     @Setter
