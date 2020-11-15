@@ -1,8 +1,9 @@
 package com.happy3w.persistence.excel.access;
 
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
+import com.happy3w.persistence.excel.ExcelUtil;
+import com.happy3w.toolkits.convert.TypeConverter;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 
 public class DoubleCellAccessor implements ICellAccessor<Double> {
     @Override
@@ -12,10 +13,12 @@ public class DoubleCellAccessor implements ICellAccessor<Double> {
 
     @Override
     public Double read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
-        if (CellType.BLANK.equals(cell.getCellTypeEnum())) {
-            return null;
+        Object value = ExcelUtil.readCellValue(cell);
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else {
+            return TypeConverter.INSTANCE.convert(value, Double.class);
         }
-        return cell.getNumericCellValue();
     }
 
     @Override
