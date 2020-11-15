@@ -3,6 +3,8 @@ package com.happy3w.persistence.excel;
 import com.happy3w.toolkits.message.MessageRecorderException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -25,5 +27,26 @@ public class ExcelUtil {
 
     public static Workbook newXlsxWorkbook() {
         return new XSSFWorkbook();
+    }
+
+    public static Object readCellValue(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        CellType type = cell.getCellTypeEnum();
+        if (type == CellType.FORMULA) {
+            type = cell.getCachedFormulaResultTypeEnum();
+        }
+
+        if (type == CellType.NUMERIC) {
+            return cell.getNumericCellValue();
+        } else if (type == CellType.STRING) {
+            return cell.getStringCellValue();
+        } else if (type == CellType.BOOLEAN) {
+            return cell.getBooleanCellValue();
+        } else {
+            cell.setCellType(CellType.STRING);
+            return cell.getStringCellValue();
+        }
     }
 }
