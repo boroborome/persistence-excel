@@ -3,6 +3,7 @@ package com.happy3w.persistence.excel.access;
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
 import com.happy3w.persistence.core.rowdata.config.DateFormatCfg;
 import com.happy3w.persistence.core.rowdata.config.DateZoneIdCfg;
+import com.happy3w.persistence.excel.ExcelUtil;
 import com.happy3w.toolkits.message.MessageRecorderException;
 import com.happy3w.toolkits.utils.ZoneIdCache;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,16 +42,19 @@ public class DateCellAccessor implements ICellAccessor<Date> {
             return null;
         }
 
-        ZoneId zoneId = getZoneId(extConfigs);
-        if (CellType.NUMERIC.equals(cell.getCellTypeEnum())) {
+        CellType cellType = ExcelUtil.getCellType(cell);
+
+        if (cellType == CellType.NUMERIC) {
+            ZoneId zoneId = getZoneId(extConfigs);
             Date cellDate = cell.getDateCellValue();
             Instant instant = LocalDateTime.ofInstant(cellDate.toInstant(), ZoneId.systemDefault())
                     .atZone(zoneId)
                     .toInstant();
             return Date.from(instant);
         }
-        if (!CellType.STRING.equals(cell.getCellTypeEnum())) {
-            throw new MessageRecorderException("Can't read date from cell type:" + cell.getCellTypeEnum());
+
+        if (!CellType.STRING.equals(cellType)) {
+            throw new MessageRecorderException("Can't read date from cell type:" + cellType);
         }
 
         String dateFormat = extConfigs.getConfig(DateFormatCfg.class).getFormat();

@@ -29,7 +29,7 @@ public class ExcelUtil {
         return new XSSFWorkbook();
     }
 
-    public static Object readCellValue(Cell cell) {
+    public static CellType getCellType(Cell cell) {
         if (cell == null) {
             return null;
         }
@@ -37,6 +37,15 @@ public class ExcelUtil {
         if (type == CellType.FORMULA) {
             type = cell.getCachedFormulaResultTypeEnum();
         }
+        return type;
+    }
+
+    // TODO: Date can't be read out
+    public static Object readCellValue(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        CellType type = getCellType(cell);
 
         if (type == CellType.NUMERIC) {
             return cell.getNumericCellValue();

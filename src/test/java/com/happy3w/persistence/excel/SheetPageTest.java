@@ -68,10 +68,22 @@ public class SheetPageTest extends TestCase {
         List<MyData> newDataList = RdAssistant.readObjs(page, objRdTableDef, messageRecorder)
                 .collect(Collectors.toList());
 
-        Assert.assertEquals("[{\"age\":15,\"enabled\":false,\"enabledText\":\"false\",\"name\":\"Tom\"}]",
+        Assert.assertEquals("[{\"age\":15,\"enabled\":true,\"enabledText\":\"true\",\"name\":\"Tom\"}]",
                 JSON.toJSONString(newDataList));
     }
 
+    public void test_read_formula_systime_success() {
+        Workbook workbook = ExcelUtil.openWorkbook(SheetPage.class.getResourceAsStream("/dq.xlsx"));
+        SheetPage page = SheetPage.of(workbook, "定期");
+
+        ObjRdTableDef<DQData> objRdTableDef = ObjRdTableDef.from(DQData.class);
+        MessageRecorder messageRecorder = new MessageRecorder();
+        List<DQData> newDataList = RdAssistant.readObjs(page, objRdTableDef, messageRecorder)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals("[{\"age\":15,\"enabled\":false,\"enabledText\":\"false\",\"name\":\"Tom\"}]",
+                JSON.toJSONString(newDataList));
+    }
 
     @Getter
     @Setter
