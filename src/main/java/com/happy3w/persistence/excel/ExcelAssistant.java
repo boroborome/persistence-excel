@@ -4,6 +4,7 @@ import com.happy3w.persistence.core.rowdata.IRdTableDef;
 import com.happy3w.persistence.core.rowdata.RdRowIterator;
 import com.happy3w.persistence.core.rowdata.RdRowWrapper;
 import com.happy3w.toolkits.iterator.EasyIterator;
+import com.happy3w.toolkits.iterator.IEasyIterator;
 import com.happy3w.toolkits.message.MessageRecorder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,7 +22,7 @@ public class ExcelAssistant {
      * @param <D> 行数据的类型
      * @return 以流的形式返回所有行数据
      */
-    public static <D> EasyIterator<RdRowWrapper<D>> readRowsIt(
+    public static <D> IEasyIterator<RdRowWrapper<D>> readRowsIt(
             IRdTableDef<D, ?> tableDef,
             Workbook workbook,
             MessageRecorder messageRecorder) {

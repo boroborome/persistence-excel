@@ -11,7 +11,7 @@ import com.happy3w.persistence.core.rowdata.obj.ObjRdPostAction;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdTableDef;
 import com.happy3w.persistence.excel.rdci.FillForegroundColor;
 import com.happy3w.persistence.excel.util.HssfColor;
-import com.happy3w.toolkits.convert.SimpleConverter;
+import com.happy3w.toolkits.convert.TypeConverter;
 import com.happy3w.toolkits.message.MessageRecorder;
 import junit.framework.TestCase;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,11 +36,11 @@ public class SheetPageTest extends TestCase {
                 MyData.builder().name("Tom")
                         .age(12)
                         .enabled(true)
-                        .favoriteDate(SimpleConverter.getInstance().convert("2020-10-10 23:00:00", Date.class).getTime())
+                        .favoriteDate(TypeConverter.INSTANCE.convert("2020-10-10 23:00:00", Date.class).getTime())
                         .build(),
                 MyData.builder().name("张三")
                         .age(21)
-                        .birthday(SimpleConverter.getInstance().convert("2020-10-10 23:00:00", Date.class))
+                        .birthday(TypeConverter.INSTANCE.convert("2020-10-10 23:00:00", Date.class))
                         .build());
 
         Workbook workbook = ExcelUtil.newXlsxWorkbook();
@@ -81,7 +80,7 @@ public class SheetPageTest extends TestCase {
         List<DQData> newDataList = RdAssistant.readObjs(page, objRdTableDef, messageRecorder)
                 .collect(Collectors.toList());
 
-        Assert.assertEquals("[{\"age\":15,\"enabled\":false,\"enabledText\":\"false\",\"name\":\"Tom\"}]",
+        Assert.assertEquals("[{\"account\":\"18362\",\"balance\":\"100.34\",\"cashOrExchange\":\"-\",\"costPrice\":\"1\",\"currency\":\"人民币\",\"maturityDate\":1610553600000,\"netValue\":\"1.01\",\"period\":\"3个月\",\"sysTime\":1605250800000,\"total\":\"100\"},{\"account\":\"7661\",\"balance\":\"1300.49\",\"cashOrExchange\":\"汇\",\"costPrice\":\"1\",\"currency\":\"美元\",\"maturityDate\":1610553600000,\"netValue\":\"1.01\",\"period\":\"3个月\",\"sysTime\":1605250800000,\"total\":\"1300\"},{\"account\":\"6248904\",\"balance\":\"342.87\",\"cashOrExchange\":\"-\",\"costPrice\":\"1\",\"currency\":\"人民币\",\"maturityDate\":1609171200000,\"netValue\":\"1.01\",\"period\":\"6个月\",\"sysTime\":1605250800000,\"total\":\"340.23\"}]",
                 JSON.toJSONString(newDataList));
     }
 
