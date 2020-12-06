@@ -2,6 +2,7 @@ package com.happy3w.persistence.excel.demo;
 
 import com.alibaba.fastjson.JSON;
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
+import com.happy3w.persistence.core.rowdata.IRdConfig;
 import com.happy3w.persistence.core.rowdata.RdAssistant;
 import com.happy3w.persistence.core.rowdata.config.DateFormatCfg;
 import com.happy3w.persistence.core.rowdata.config.DateZoneIdCfg;
@@ -62,6 +63,9 @@ public class DemoTest {
 
         if (messageRecorder.isSuccess()) {
             // 保存数据到数据库
+        } else {
+            // messageRecorder.getErrors();	// 读取所有错误信息，如果Excel中有多个错误，这里是多个错误
+            // messageRecorder.toResponse();// 将errors,warnings等各种信息转换为一个response返回
         }
 
         Assert.assertEquals(JSON.toJSONString(orgStudentList),
@@ -82,6 +86,14 @@ public class DemoTest {
         return orgStudentList;
     }
 
+    private ExtConfigs createExtConfigs(IRdConfig...configs) {
+        ExtConfigs extConfigs = new ExtConfigs();
+        for (IRdConfig config : configs) {
+            extConfigs.regist(config);
+        }
+        return extConfigs;
+    }
+
     @Test
     public void should_read_write_success_with_rddef() throws IOException {
         List<Student> orgStudentList = createTestData();
@@ -91,17 +103,17 @@ public class DemoTest {
                 .setColumns(Arrays.asList(RdColumnDef.builder() // 按照Excel中出现的Title顺序填写
                                 .title("名字")
                                 .dataType(String.class)         // 数据类型是用于读取Excle用的，如果只用于写入，可以不填写这个信息
-                                .extConfigs(new ExtConfigs().regist(new FillForegroundColorCfg(HssfColor.RED)))
+                                .extConfigs(createExtConfigs(new FillForegroundColorCfg(HssfColor.RED)))
                                 .build(),
                         RdColumnDef.builder()
                                 .title("生日")
                                 .dataType(Date.class)
-                                .extConfigs(new ExtConfigs().regist(new DateFormatCfg("yyyy-MM-dd")))
+                                .extConfigs(createExtConfigs(new DateFormatCfg("yyyy-MM-dd")))
                                 .build(),
                         RdColumnDef.builder()
                                 .title("年龄")
                                 .dataType(Integer.class)
-                                .extConfigs(new ExtConfigs().regist(new NumFormatCfg("000")))
+                                .extConfigs(createExtConfigs(new NumFormatCfg("000")))
                                 .build(),
                         RdColumnDef.builder()
                                 .title("体重")
@@ -110,8 +122,8 @@ public class DemoTest {
                         RdColumnDef.builder()
                                 .title("更新时间")
                                 .dataType(Long.class)
-                                .extConfigs(new ExtConfigs().regist(new DateFormatCfg("yyyy-MM-dd HH:mm:ss"))
-                                    .regist(new DateZoneIdCfg("UTC-8")))
+                                .extConfigs(createExtConfigs(new DateFormatCfg("yyyy-MM-dd HH:mm:ss"),
+                                        new DateZoneIdCfg("UTC-8")))
                                 .build(),
                         RdColumnDef.builder()
                                 .title("在校生")
