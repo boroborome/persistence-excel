@@ -11,14 +11,14 @@ Add the Maven dependency:
 <dependency>
     <groupId>com.happy3w</groupId>
     <artifactId>persistence-excel</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
 Add the Gradle dependency:
 
 ```groovy
-implementation 'com.happy3w:persistence-excel:0.0.3'
+implementation 'com.happy3w:persistence-excel:0.0.4'
 ```
 
 ## 组件介绍
