@@ -56,7 +56,7 @@ public class Student {
      */
     @ObjRdPostAction
     public void postInit(RdRowWrapper<Student> data, MessageRecorder recorder) {
-        if (age < 0 || age > 100) {
+        if (age != null && (age < 0 || age > 100)) {
             recorder.appendError("Wrong age:{0}", age);
         }
         if (name.startsWith("Name:")) {
