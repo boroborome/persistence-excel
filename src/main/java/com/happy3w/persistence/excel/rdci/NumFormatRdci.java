@@ -5,7 +5,7 @@ import com.happy3w.persistence.excel.BuildStyleContext;
 import com.happy3w.persistence.excel.RdConfigInfo;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-public class NumFormatRdci extends RdConfigInfo<Number, NumFormatCfg> {
+public class NumFormatRdci extends RdConfigInfo<NumFormatCfg> {
     public NumFormatRdci() {
         super(NumFormatCfg.class, Number.class);
     }

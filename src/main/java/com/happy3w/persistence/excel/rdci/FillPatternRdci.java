@@ -4,7 +4,7 @@ import com.happy3w.persistence.excel.BuildStyleContext;
 import com.happy3w.persistence.excel.RdConfigInfo;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-public class FillPatternRdci extends RdConfigInfo<Void, FillPatternCfg> {
+public class FillPatternRdci extends RdConfigInfo<FillPatternCfg> {
     public FillPatternRdci() {
         super(FillPatternCfg.class);
     }

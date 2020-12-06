@@ -7,15 +7,14 @@ import org.apache.poi.ss.usermodel.CellStyle;
 
 /**
  * 配置处理信息。SheetPage用这些信息让各种配置在Excel上生效
- * @param <VT> 需要处理数据的数据类型
  * @param <CT> 对应配置的类型
  */
 @Getter
-public abstract class RdConfigInfo<VT, CT extends IRdConfig> implements ITypeItem<VT> {
+public abstract class RdConfigInfo<CT extends IRdConfig> implements ITypeItem {
     /**
      * 需要处理数据的数据类型
      */
-    protected Class<VT> type;
+    protected Class<?> type;
 
     /**
      * 对应配置的类型
@@ -26,7 +25,7 @@ public abstract class RdConfigInfo<VT, CT extends IRdConfig> implements ITypeIte
         this(configType, null);
     }
 
-    public RdConfigInfo(Class<CT> configType, Class<VT> type) {
+    public RdConfigInfo(Class<CT> configType, Class<?> type) {
         this.type = type;
         this.configType = configType;
         this.isDataFormat = type != null && type != Void.class && type != Object.class;

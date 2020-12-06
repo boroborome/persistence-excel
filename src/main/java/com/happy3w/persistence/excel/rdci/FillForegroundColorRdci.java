@@ -5,7 +5,7 @@ import com.happy3w.persistence.excel.RdConfigInfo;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 
-public class FillForegroundColorRdci extends RdConfigInfo<Void, FillForegroundColorCfg> {
+public class FillForegroundColorRdci extends RdConfigInfo<FillForegroundColorCfg> {
     public FillForegroundColorRdci() {
         super(FillForegroundColorCfg.class);
     }

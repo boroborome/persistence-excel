@@ -11,7 +11,7 @@ public class RdciHolder {
      * 默认的行数据配置信息<br>
      *     这里信息修改后，所有新创建的SheetPage会使用这个信息，之前创建的不会变化
      */
-    public static final List<RdConfigInfo<?, ? extends IRdConfig>> ALL_CONFIG_INFOS = new ArrayList<>();
+    public static final List<RdConfigInfo<? extends IRdConfig>> ALL_CONFIG_INFOS = new ArrayList<>();
 
     static {
         ALL_CONFIG_INFOS.add(new NumFormatRdci());

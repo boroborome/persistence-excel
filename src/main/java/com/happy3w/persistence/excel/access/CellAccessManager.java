@@ -3,7 +3,7 @@ package com.happy3w.persistence.excel.access;
 import com.happy3w.toolkits.manager.TypeItemManager;
 
 public class CellAccessManager {
-    public static final TypeItemManager<ICellAccessor> INSTANCE = new TypeItemManager<ICellAccessor>();
+    public static final TypeItemManager<ICellAccessor> INSTANCE = TypeItemManager.inherit();
 
     static {
         INSTANCE.registItem(new IntegerCellAccessor());

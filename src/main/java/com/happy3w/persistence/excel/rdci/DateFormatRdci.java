@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 
 import java.util.Date;
 
-public class DateFormatRdci extends RdConfigInfo<Date, DateFormatCfg> {
+public class DateFormatRdci extends RdConfigInfo<DateFormatCfg> {
     public DateFormatRdci() {
         super(DateFormatCfg.class, Date.class);
     }

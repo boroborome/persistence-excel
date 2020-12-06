@@ -41,7 +41,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     private Map<Class<? extends IRdConfig>, RdConfigInfo> configTypeToInfo = new HashMap<>();
     private Map<Class<? extends IRdConfig>, RdConfigInfo> dataFormatConfigs = new HashMap<>();
-    private TypeItemManager<RdConfigInfo> dataTypeToInfo = new TypeItemManager<>();
+    private TypeItemManager<RdConfigInfo> dataTypeToInfo = TypeItemManager.inherit();
 
     /**
      * 在某一列上的配置
@@ -61,13 +61,13 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         regRdConfigInfos(RdciHolder.ALL_CONFIG_INFOS);
     }
 
-    public void regRdConfigInfos(List<RdConfigInfo<?, ? extends IRdConfig>> rdConfigInfos) {
-        for (RdConfigInfo<?, ? extends IRdConfig> rdConfigInfo : rdConfigInfos) {
+    public void regRdConfigInfos(List<RdConfigInfo<? extends IRdConfig>> rdConfigInfos) {
+        for (RdConfigInfo<? extends IRdConfig> rdConfigInfo : rdConfigInfos) {
             regRdConfigInfo(rdConfigInfo);
         }
     }
 
-    public void regRdConfigInfo(RdConfigInfo<?, ? extends IRdConfig> rdConfigInfo) {
+    public void regRdConfigInfo(RdConfigInfo<? extends IRdConfig> rdConfigInfo) {
         configTypeToInfo.put(rdConfigInfo.getConfigType(), rdConfigInfo);
         if (rdConfigInfo.isDataFormat()) {
             dataTypeToInfo.registItem(rdConfigInfo);
@@ -142,7 +142,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
     private CellStyle createCellStyle(ExtConfigs extConfigs) {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         for (IRdConfig config : extConfigs.getConfigs().values()) {
-            RdConfigInfo<?, IRdConfig> configInfo = configTypeToInfo.get(config.getClass());
+            RdConfigInfo<IRdConfig> configInfo = configTypeToInfo.get(config.getClass());
             if (configInfo == null) {
                 continue;
             }
@@ -181,7 +181,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
         if (formatConfigType == null) {
             if (expectValueType != null) {
-                RdConfigInfo configInfo = dataTypeToInfo.findItemInheritType(expectValueType);
+                RdConfigInfo configInfo = dataTypeToInfo.findByType(expectValueType);
                 if (configInfo != null) {
                     formatConfigType = configInfo.getConfigType();
                 }
@@ -217,7 +217,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
     }
 
     private ICellAccessor chooseAccessor(Class valueType) {
-        ICellAccessor writer = cellAccessManager.findItemInheritType(valueType);
+        ICellAccessor writer = cellAccessManager.findByType(valueType);
         if (writer == null) {
             throw new UnsupportedOperationException(
                     MessageFormat.format("Unsupported type {0}, no write for it.", valueType));
