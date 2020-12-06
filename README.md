@@ -192,3 +192,6 @@ List<MyData> datas = ExcelAssistant.readRows(objRdTableDef, workbook, messageRec
         .collect(Collectors.toList());
 
 ```
+## 历史
+### 0.0.4
+- 升级libs，修复数据转换的bug
