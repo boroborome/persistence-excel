@@ -80,6 +80,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         return sheet.getSheetName();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <D> D readValue(int rowIndex, int columnIndex, Class<D> dataType, ExtConfigs extConfigs) {
         Row row = sheet.getRow(rowIndex);
