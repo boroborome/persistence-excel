@@ -218,12 +218,12 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
     }
 
     private ICellAccessor chooseAccessor(Class valueType) {
-        ICellAccessor writer = cellAccessManager.findByType(valueType);
-        if (writer == null) {
+        ICellAccessor accessor = cellAccessManager.findByType(valueType);
+        if (accessor == null) {
             throw new UnsupportedOperationException(
                     MessageFormat.format("Unsupported type {0}, no write for it.", valueType));
         }
-        return writer;
+        return accessor;
     }
 
     public int getColumnSize(Cell cell) {
