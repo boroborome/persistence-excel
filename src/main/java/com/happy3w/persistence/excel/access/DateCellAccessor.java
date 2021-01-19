@@ -7,6 +7,8 @@ import com.happy3w.persistence.excel.ExcelUtil;
 import com.happy3w.toolkits.message.MessageRecorderException;
 import com.happy3w.toolkits.utils.StringUtils;
 import com.happy3w.toolkits.utils.ZoneIdCache;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -19,7 +21,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+@Getter
+@Setter
 public class DateCellAccessor implements ICellAccessor<Date> {
+    private String nullText;
+
     @Override
     public void write(Cell cell, Date value, ExtConfigs extConfigs) {
         ZoneId zoneId = getZoneId(extConfigs);
@@ -58,13 +64,29 @@ public class DateCellAccessor implements ICellAccessor<Date> {
             throw new MessageRecorderException("Can't read date from cell type:" + cellType);
         }
 
+        String strDate = readCellText(cell);
+        if (isNull(strDate)) {
+            return null;
+        }
+
         String dateFormat = findDateFormatWithDefault(extConfigs, "yyyy-MM-dd HH:mm:ss");
-        String strDate = cell.getStringCellValue().trim();
         try {
             return StringUtils.isEmpty(strDate) ? null : new SimpleDateFormat(dateFormat).parse(strDate);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Failed to parse date:" + strDate, e);
         }
+    }
+
+    private boolean isNull(String strDate) {
+        return StringUtils.isEmpty(strDate) || (nullText != null && nullText.equals(strDate));
+    }
+
+    private String readCellText(Cell cell) {
+        String value = cell.getStringCellValue();
+        if (value != null) {
+            value = value.trim();
+        }
+        return value;
     }
 
     private String findDateFormatWithDefault(ExtConfigs extConfigs, String defaultFormat) {

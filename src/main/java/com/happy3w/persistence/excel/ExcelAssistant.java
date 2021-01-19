@@ -9,6 +9,7 @@ import com.happy3w.toolkits.message.MessageRecorder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -31,8 +32,27 @@ public class ExcelAssistant {
                 .flatMap(page -> RdRowIterator.from(page, tableDef, messageRecorder));
     }
 
+    public static <D> IEasyIterator<RdRowWrapper<D>> readRowsIt(
+            IRdTableDef<D, ?> tableDef,
+            Workbook workbook,
+            MessageRecorder messageRecorder,
+            Consumer<SheetPage> pageConfigurer) {
+        return EasyIterator.range(0, workbook.getNumberOfSheets())
+                .map(index -> SheetPage.of(workbook.getSheetAt(index)))
+                .peek(pageConfigurer)
+                .flatMap(page -> RdRowIterator.from(page, tableDef, messageRecorder));
+    }
+
     public static <D> Stream<RdRowWrapper<D>> readRows(
             IRdTableDef<D, ?> tableDef, Workbook workbook, MessageRecorder messageRecorder) {
         return readRowsIt(tableDef, workbook, messageRecorder).stream();
+    }
+
+    public static <D> Stream<RdRowWrapper<D>> readRows(
+            IRdTableDef<D, ?> tableDef,
+            Workbook workbook,
+            MessageRecorder messageRecorder,
+            Consumer<SheetPage> pageConfigurer) {
+        return readRowsIt(tableDef, workbook, messageRecorder, pageConfigurer).stream();
     }
 }
