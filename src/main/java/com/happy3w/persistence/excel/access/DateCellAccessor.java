@@ -5,6 +5,7 @@ import com.happy3w.persistence.core.rowdata.config.DateFormatCfg;
 import com.happy3w.persistence.core.rowdata.config.DateZoneIdCfg;
 import com.happy3w.persistence.excel.ExcelUtil;
 import com.happy3w.toolkits.message.MessageRecorderException;
+import com.happy3w.toolkits.utils.StringUtils;
 import com.happy3w.toolkits.utils.ZoneIdCache;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -57,13 +58,24 @@ public class DateCellAccessor implements ICellAccessor<Date> {
             throw new MessageRecorderException("Can't read date from cell type:" + cellType);
         }
 
-        String dateFormat = extConfigs.getConfig(DateFormatCfg.class).getFormat();
+        String dateFormat = findDateFormatWithDefault(extConfigs, "yyyy-MM-dd HH:mm:ss");
         String strDate = cell.getStringCellValue().trim();
         try {
-            return new SimpleDateFormat(dateFormat).parse(strDate);
+            return StringUtils.isEmpty(strDate) ? null : new SimpleDateFormat(dateFormat).parse(strDate);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Failed to parse date:" + strDate, e);
         }
+    }
+
+    private String findDateFormatWithDefault(ExtConfigs extConfigs, String defaultFormat) {
+        if (extConfigs == null) {
+            return defaultFormat;
+        }
+        DateFormatCfg cfg = extConfigs.getConfig(DateFormatCfg.class);
+        if (cfg == null) {
+            return defaultFormat;
+        }
+        return cfg.getFormat();
     }
 
     @Override
