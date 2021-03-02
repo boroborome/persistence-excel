@@ -9,7 +9,7 @@ import com.happy3w.persistence.core.rowdata.config.DateZoneIdCfg;
 import com.happy3w.persistence.core.rowdata.config.NumFormatCfg;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdTableDef;
 import com.happy3w.persistence.core.rowdata.simple.RdColumnDef;
-import com.happy3w.persistence.core.rowdata.simple.RdTableDef;
+import com.happy3w.persistence.core.rowdata.simple.ListRdTableDef;
 import com.happy3w.persistence.excel.ExcelUtil;
 import com.happy3w.persistence.excel.SheetPage;
 import com.happy3w.persistence.excel.rdci.FillForegroundColorCfg;
@@ -98,7 +98,7 @@ public class DemoTest {
     public void should_read_write_success_with_rddef() throws IOException {
         List<Student> orgStudentList = createTestData();
 
-        RdTableDef rdTableDef = new RdTableDef();
+        ListRdTableDef rdTableDef = new ListRdTableDef();
         rdTableDef.config(new NumFormatCfg("#.00"))
                 .setColumns(Arrays.asList(RdColumnDef.builder() // 按照Excel中出现的Title顺序填写
                                 .title("名字")
