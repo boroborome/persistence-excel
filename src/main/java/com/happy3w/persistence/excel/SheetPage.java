@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -53,6 +54,8 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
     private BuildStyleContext buildStyleContext = new BuildStyleContext();
 
+    private FormulaEvaluator formulaEvaluator;
+
     public SheetPage(Sheet sheet) {
         this.sheet = sheet;
         buildStyleContext.setSheet(sheet);
@@ -81,6 +84,13 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         return sheet.getSheetName();
     }
 
+    private FormulaEvaluator getFormulaEvaluator(Cell cell) {
+        if (formulaEvaluator == null) {
+            formulaEvaluator = cell.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+        }
+        return formulaEvaluator;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <D> D readValue(int rowIndex, int columnIndex, Class<D> dataType, ExtConfigs extConfigs) {
@@ -89,6 +99,9 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
             return null;
         }
         Cell cell = row.getCell(columnIndex);
+        if (cell.getCellTypeEnum() == CellType.FORMULA) {
+            getFormulaEvaluator(cell).evaluate(cell);
+        }
         if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return null;
         }
