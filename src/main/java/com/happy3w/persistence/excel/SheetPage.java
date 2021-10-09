@@ -99,11 +99,11 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
             return null;
         }
         Cell cell = row.getCell(columnIndex);
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
-            getFormulaEvaluator(cell).evaluate(cell);
-        }
         if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return null;
+        }
+        if (cell.getCellTypeEnum() == CellType.FORMULA) {
+            getFormulaEvaluator(cell).evaluate(cell);
         }
 
         dataType = PrimitiveTypeUtil.toObjType(dataType);
