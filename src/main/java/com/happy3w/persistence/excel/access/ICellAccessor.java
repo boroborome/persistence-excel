@@ -6,5 +6,5 @@ import org.apache.poi.ss.usermodel.Cell;
 
 public interface ICellAccessor<T> extends ITypeItem {
     void write(Cell cell, T value, ExtConfigs extConfigs);
-    T read(Cell cell, Class<?> valueType, ExtConfigs extConfigs);
+    T read(Cell cell, Class<?> valueType, ExtConfigs extConfigs, ICellAccessContext context);
 }

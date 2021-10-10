@@ -5,6 +5,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -56,6 +57,23 @@ public class ExcelUtil {
         } else {
             cell.setCellType(CellType.STRING);
             return cell.getStringCellValue();
+        }
+    }
+
+    public static Object readCellValue(CellValue cv) {
+        if (cv == null) {
+            return null;
+        }
+        CellType type = cv.getCellTypeEnum();
+
+        if (type == CellType.NUMERIC) {
+            return cv.getNumberValue();
+        } else if (type == CellType.STRING) {
+            return cv.getStringValue();
+        } else if (type == CellType.BOOLEAN) {
+            return cv.getBooleanValue();
+        } else {
+            return cv.getErrorValue();
         }
     }
 }

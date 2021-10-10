@@ -1,16 +1,17 @@
 package com.happy3w.persistence.excel.access;
 
+import com.happy3w.java.ext.StringUtils;
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
 import com.happy3w.persistence.core.rowdata.config.DateFormatCfg;
 import com.happy3w.persistence.core.rowdata.config.DateZoneIdCfg;
-import com.happy3w.persistence.excel.ExcelUtil;
 import com.happy3w.toolkits.message.MessageRecorderException;
-import com.happy3w.toolkits.utils.StringUtils;
 import com.happy3w.toolkits.utils.ZoneIdCache;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,27 +45,24 @@ public class DateCellAccessor implements ICellAccessor<Date> {
     }
 
     @Override
-    public Date read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
-        if (CellType.BLANK.equals(cell.getCellTypeEnum())) {
+    public Date read(Cell cell, Class<?> valueType, ExtConfigs extConfigs, ICellAccessContext context) {
+        CellValue cv = context.readCellValue(cell);
+        CellType cellType = cv.getCellTypeEnum();
+        if (CellType.BLANK.equals(cellType)) {
             return null;
-        }
-
-        CellType cellType = ExcelUtil.getCellType(cell);
-
-        if (cellType == CellType.NUMERIC) {
+        } else if (cellType == CellType.NUMERIC) {
             ZoneId zoneId = getZoneId(extConfigs);
-            Date cellDate = cell.getDateCellValue();
+//            Date cellDate = cell.getDateCellValue();
+            Date cellDate = DateUtil.getJavaDate(cv.getNumberValue(), false);
             Instant instant = LocalDateTime.ofInstant(cellDate.toInstant(), ZoneId.systemDefault())
                     .atZone(zoneId)
                     .toInstant();
             return Date.from(instant);
-        }
-
-        if (!CellType.STRING.equals(cellType)) {
+        } else if (!CellType.STRING.equals(cellType)) {
             throw new MessageRecorderException("Can't read date from cell type:" + cellType);
         }
 
-        String strDate = readCellText(cell);
+        String strDate = cv.getStringValue();
         if (isNull(strDate)) {
             return null;
         }
@@ -79,14 +77,6 @@ public class DateCellAccessor implements ICellAccessor<Date> {
 
     private boolean isNull(String strDate) {
         return StringUtils.isEmpty(strDate) || (nullText != null && nullText.equals(strDate));
-    }
-
-    private String readCellText(Cell cell) {
-        String value = cell.getStringCellValue();
-        if (value != null) {
-            value = value.trim();
-        }
-        return value;
     }
 
     private String findDateFormatWithDefault(ExtConfigs extConfigs, String defaultFormat) {

@@ -1,15 +1,16 @@
 package com.happy3w.persistence.excel;
 
+import com.happy3w.java.ext.Pair;
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
 import com.happy3w.persistence.core.rowdata.IRdConfig;
 import com.happy3w.persistence.core.rowdata.page.AbstractWriteDataPage;
 import com.happy3w.persistence.core.rowdata.page.IReadDataPage;
 import com.happy3w.persistence.excel.access.CellAccessManager;
+import com.happy3w.persistence.excel.access.ICellAccessContext;
 import com.happy3w.persistence.excel.access.ICellAccessor;
 import com.happy3w.persistence.excel.rdci.RdciHolder;
 import com.happy3w.toolkits.convert.TypeConverter;
 import com.happy3w.toolkits.manager.TypeItemManager;
-import com.happy3w.toolkits.utils.Pair;
 import com.happy3w.toolkits.utils.PrimitiveTypeUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,13 +30,13 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IReadDataPage<SheetPage> {
+public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IReadDataPage<SheetPage>, ICellAccessContext {
     @Getter
     private final Sheet sheet;
 
     @Getter
     @Setter
-    private TypeConverter valueConverter;
+    private TypeConverter typeConverter;
 
     @Getter
     @Setter
@@ -60,7 +61,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         this.sheet = sheet;
         buildStyleContext.setSheet(sheet);
         buildStyleContext.setWorkbook(sheet.getWorkbook());
-        valueConverter = TypeConverter.INSTANCE.newCopy();
+        typeConverter = TypeConverter.INSTANCE.newCopy();
         cellAccessManager = CellAccessManager.INSTANCE.newCopy();
         regRdConfigInfos(RdciHolder.ALL_CONFIG_INFOS);
     }
@@ -84,9 +85,10 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         return sheet.getSheetName();
     }
 
-    private FormulaEvaluator getFormulaEvaluator(Cell cell) {
+    @Override
+    public FormulaEvaluator getFormulaEvaluator() {
         if (formulaEvaluator == null) {
-            formulaEvaluator = cell.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+            formulaEvaluator = sheet.getWorkbook().getCreationHelper().createFormulaEvaluator();
         }
         return formulaEvaluator;
     }
@@ -102,9 +104,6 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
         if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
             return null;
         }
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
-            getFormulaEvaluator(cell).evaluate(cell);
-        }
 
         dataType = PrimitiveTypeUtil.toObjType(dataType);
         ExtConfigs columnConfig = columnConfigs.get(column);
@@ -114,9 +113,9 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
 
         ExtConfigs mergedConfig = mergeConfigs(formatConfigType, extConfigs, columnConfig, this.extConfigs);
         ICellAccessor accessor = chooseAccessor(expectValueType);
-        Object cellValue = accessor.read(cell, expectValueType, mergedConfig);
+        Object orgCellValue = accessor.read(cell, expectValueType, mergedConfig, this);
 
-        return (D) convertValueToExpectType(cellValue, dataType);
+        return (D) convertValueToExpectType(orgCellValue, dataType);
     }
 
     @Override
@@ -172,7 +171,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
                 || expectValueType.isAssignableFrom(value.getClass())) {
             return value;
         }
-        return valueConverter.convert(value, expectValueType);
+        return typeConverter.convert(value, expectValueType);
     }
 
     private Class<? extends IRdConfig> findFirstDataFormatConfig(ExtConfigs[] candidateConfigs) {

@@ -1,6 +1,6 @@
 
 group = 'com.happy3w'
-version = '0.0.6'
+version = '0.1.0'
 ext {
 	artifactId = "persistence-excel"
 
@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.2'
-	api 'com.happy3w:persistence-core:0.0.5'
+	api 'com.happy3w:persistence-core:0.1.0'
 	api 'org.apache.poi:poi-ooxml:3.17'
 	implementation 'org.slf4j:slf4j-api:1.7.25'
 

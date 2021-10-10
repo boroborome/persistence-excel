@@ -5,6 +5,7 @@ import com.happy3w.persistence.excel.ExcelUtil;
 import com.happy3w.toolkits.convert.TypeConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 
 public class IntegerCellAccessor implements ICellAccessor<Integer> {
     @Override
@@ -13,13 +14,10 @@ public class IntegerCellAccessor implements ICellAccessor<Integer> {
     }
 
     @Override
-    public Integer read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
-        Object value = ExcelUtil.readCellValue(cell);
-        if (value instanceof Number) {
-            return ((Number) value).intValue();
-        } else {
-            return TypeConverter.INSTANCE.convert(value, Integer.class);
-        }
+    public Integer read(Cell cell, Class<?> valueType, ExtConfigs extConfigs, ICellAccessContext context) {
+        CellValue cv = context.readCellValue(cell);
+        Object value = ExcelUtil.readCellValue(cv);
+        return context.convert(value, Integer.class);
     }
 
     @Override

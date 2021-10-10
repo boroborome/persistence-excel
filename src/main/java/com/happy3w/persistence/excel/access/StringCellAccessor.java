@@ -1,8 +1,9 @@
 package com.happy3w.persistence.excel.access;
 
 import com.happy3w.persistence.core.rowdata.ExtConfigs;
+import com.happy3w.persistence.excel.ExcelUtil;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 
 public class StringCellAccessor implements ICellAccessor<String> {
     @Override
@@ -11,11 +12,10 @@ public class StringCellAccessor implements ICellAccessor<String> {
     }
 
     @Override
-    public String read(Cell cell, Class<?> valueType, ExtConfigs extConfigs) {
-        if (cell.getCellTypeEnum() != CellType.STRING) {
-            cell.setCellType(CellType.STRING);
-        }
-        return cell.getStringCellValue();
+    public String read(Cell cell, Class<?> valueType, ExtConfigs extConfigs, ICellAccessContext context) {
+        CellValue cv = context.readCellValue(cell);
+        Object value = ExcelUtil.readCellValue(cv);
+        return context.convert(value, String.class);
     }
 
     @Override
