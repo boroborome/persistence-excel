@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
@@ -45,9 +46,9 @@ public class DemoTest {
         ObjRdTableDef<Student> objRdTableDef = ObjRdTableDef.from(Student.class);
 
         // 通过"行数据助理"将数据写入excel page
-        RdAssistant.writeObj(orgStudentList.stream(), page, objRdTableDef);
+        RdAssistant.writeObj(page, orgStudentList.stream(), objRdTableDef);
 
-        workbook.write(new FileOutputStream(new File("test.xlsx")));
+        workbook.write(Files.newOutputStream(new File("test.xlsx").toPath()));
 
         // ---------读数据
         // 从文件或者什么流中读入workbook。这里同时支持xlsx或者xls格式
@@ -86,7 +87,7 @@ public class DemoTest {
         return orgStudentList;
     }
 
-    private ExtConfigs createExtConfigs(IRdConfig...configs) {
+    private ExtConfigs createExtConfigs(IRdConfig... configs) {
         ExtConfigs extConfigs = new ExtConfigs();
         for (IRdConfig config : configs) {
             extConfigs.regist(config);
@@ -139,9 +140,10 @@ public class DemoTest {
         SheetPage page = SheetPage.of(workbook, "test-page");
 
         // 通过"行数据助理"将数据写入excel page
-        RdAssistant.writeObj(orgStudentList.stream().map(s ->
+        RdAssistant.writeObj(page,
+                orgStudentList.stream().map(s ->
                         Arrays.asList(s.getName(), s.getBirthday(), s.getAge(), s.getWeight(), s.getUpdateTime(), s.getStudyingText())),
-                page, rdTableDef);
+                rdTableDef);
 
         workbook.write(new FileOutputStream(new File("test.xlsx")));
 

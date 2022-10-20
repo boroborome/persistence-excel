@@ -33,7 +33,7 @@ public class SheetPageTest extends TestCase {
         SheetPage page = SheetPage.of(workbook, "test-page");
 
         ObjRdTableDef<MyData> objRdTableDef = ObjRdTableDef.from(MyData.class);
-        RdAssistant.writeObj(orgDataList.stream(), page, objRdTableDef);
+        RdAssistant.writeObj(page, orgDataList.stream(), objRdTableDef);
 
         MessageRecorder messageRecorder = new MessageRecorder();
         List<MyData> newDataList = RdAssistant.readObjs(page, objRdTableDef, messageRecorder)

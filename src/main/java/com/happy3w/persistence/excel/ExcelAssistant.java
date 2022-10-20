@@ -1,5 +1,6 @@
 package com.happy3w.persistence.excel;
 
+import com.happy3w.java.ext.StringUtils;
 import com.happy3w.persistence.core.rowdata.IRdTableDef;
 import com.happy3w.persistence.core.rowdata.RdRowIterator;
 import com.happy3w.persistence.core.rowdata.RdRowWrapper;
@@ -9,6 +10,7 @@ import com.happy3w.toolkits.message.MessageRecorder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -54,5 +56,20 @@ public class ExcelAssistant {
             MessageRecorder messageRecorder,
             Consumer<SheetPage> pageConfigurer) {
         return readRowsIt(tableDef, workbook, messageRecorder, pageConfigurer).stream();
+    }
+
+    public static <D> void writeRows(Iterator<D> rowIt,
+                                     Workbook workbook,
+                                     WriteOptions<D> options) {
+        SheetPage sheet = takeSheetToWrite(workbook, options);
+    }
+
+    private static <D> SheetPage takeSheetToWrite(Workbook workbook, WriteOptions<D> options) {
+        String sheetName = options.getSheetName();
+        if (StringUtils.isEmpty(sheetName)) {
+            return SheetPage.of(workbook.createSheet());
+        } else {
+            return SheetPage.of(workbook, sheetName);
+        }
     }
 }
