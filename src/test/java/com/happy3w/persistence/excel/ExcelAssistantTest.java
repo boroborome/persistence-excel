@@ -1,14 +1,11 @@
 package com.happy3w.persistence.excel;
 
 import com.happy3w.persistence.excel.access.DateCellAccessor;
-import com.happy3w.persistence.excel.access.ICellAccessor;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
-
-import static org.junit.Assert.*;
 
 public class ExcelAssistantTest {
 
@@ -19,6 +16,6 @@ public class ExcelAssistantTest {
         DateCellAccessor accessor = (DateCellAccessor) page.getCellAccessManager()
                 .findByType(Date.class);
 
-        Assert.assertNotNull(accessor);
+        Assertions.assertNotNull(accessor);
     }
 }

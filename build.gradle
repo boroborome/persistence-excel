@@ -8,6 +8,9 @@ ext {
 	description = "A helpfull tools to access excel file."
 	url = 'https://github.com/boroborome/persistence-excel'
 	developerConnection = 'scm:git@github.com:boroborome/persistence-excel.git'
+
+	junitVersion='5.8.2'
+	lombokVersion='1.18.22'
 }
 
 apply plugin: 'java-library'
@@ -20,18 +23,26 @@ repositories {
 }
 
 dependencies {
-	compileOnly 'org.projectlombok:lombok:1.18.2'
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	api 'com.happy3w:persistence-core:1.0.2'
 	api 'org.apache.poi:poi-ooxml:3.17'
 	implementation 'org.slf4j:slf4j-api:1.7.25'
 
-	annotationProcessor 'org.projectlombok:lombok:1.18.2'
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-	testImplementation 'junit:junit:4.12'
+	testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+	testCompile "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
 	testImplementation 'com.alibaba:fastjson:1.2.29'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.2'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.2'
+	testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+	testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "skipped", "failed"
+	}
+}

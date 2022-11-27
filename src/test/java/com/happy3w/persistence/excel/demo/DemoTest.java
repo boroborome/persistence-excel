@@ -8,16 +8,16 @@ import com.happy3w.persistence.core.rowdata.config.DateFormatCfg;
 import com.happy3w.persistence.core.rowdata.config.DateZoneIdCfg;
 import com.happy3w.persistence.core.rowdata.config.NumFormatCfg;
 import com.happy3w.persistence.core.rowdata.obj.ObjRdTableDef;
-import com.happy3w.persistence.core.rowdata.simple.RdColumnDef;
 import com.happy3w.persistence.core.rowdata.simple.ListRdTableDef;
+import com.happy3w.persistence.core.rowdata.simple.RdColumnDef;
 import com.happy3w.persistence.excel.ExcelUtil;
 import com.happy3w.persistence.excel.SheetPage;
 import com.happy3w.persistence.excel.rdci.FillForegroundColorCfg;
 import com.happy3w.persistence.excel.util.HssfColor;
 import com.happy3w.toolkits.message.MessageRecorder;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +69,7 @@ public class DemoTest {
             // messageRecorder.toResponse();// 将errors,warnings等各种信息转换为一个response返回
         }
 
-        Assert.assertEquals(JSON.toJSONString(orgStudentList),
+        Assertions.assertEquals(JSON.toJSONString(orgStudentList),
                 JSON.toJSONString(newDataList));
     }
 
