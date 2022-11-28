@@ -2,7 +2,6 @@ package com.happy3w.persistence.excel;
 
 import com.happy3w.toolkits.message.MessageRecorderException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -17,7 +16,7 @@ public class ExcelUtil {
     public static Workbook openWorkbook(InputStream inputStream) {
         try {
             return WorkbookFactory.create(inputStream);
-        } catch (IOException | InvalidFormatException e) {
+        } catch (IOException e) {
             throw new MessageRecorderException("Failed to open excel file.", e);
         }
     }
@@ -34,9 +33,9 @@ public class ExcelUtil {
         if (cell == null) {
             return null;
         }
-        CellType type = cell.getCellTypeEnum();
+        CellType type = cell.getCellType();
         if (type == CellType.FORMULA) {
-            type = cell.getCachedFormulaResultTypeEnum();
+            type = cell.getCachedFormulaResultType();
         }
         return type;
     }
@@ -64,7 +63,7 @@ public class ExcelUtil {
         if (cv == null) {
             return null;
         }
-        CellType type = cv.getCellTypeEnum();
+        CellType type = cv.getCellType();
 
         if (type == CellType.NUMERIC) {
             return cv.getNumberValue();

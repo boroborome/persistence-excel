@@ -101,7 +101,7 @@ public class SheetPage extends AbstractWriteDataPage<SheetPage> implements IRead
             return null;
         }
         Cell cell = row.getCell(columnIndex);
-        if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;
         }
 

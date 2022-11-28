@@ -47,7 +47,7 @@ public class DateCellAccessor implements ICellAccessor<Date> {
     @Override
     public Date read(Cell cell, Class<?> valueType, ExtConfigs extConfigs, ICellAccessContext context) {
         CellValue cv = context.readCellValue(cell);
-        CellType cellType = cv.getCellTypeEnum();
+        CellType cellType = cv.getCellType();
         if (CellType.BLANK.equals(cellType)) {
             return null;
         } else if (cellType == CellType.NUMERIC) {
