@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
-	api 'com.happy3w:persistence-core:1.0.2'
+	api 'com.happy3w:persistence-core:1.0.3'
 	api 'org.apache.poi:poi-ooxml:5.2.3'
 	implementation 'org.slf4j:slf4j-api:1.7.25'
 
